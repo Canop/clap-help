@@ -26,9 +26,17 @@ struct Args {
     #[arg(short, long, default_value = "3")]
     width: u16,
 
+    /// Whether birds should be killed
+    #[arg(short, long)]
+    kill_birds: bool,
+
     /// Computation strategy
-    #[arg(short, long, default_value = "fast")]
+    #[arg(long, default_value = "fast")]
     strategy: Strategy,
+
+    /// Bird separator
+    #[arg(short, long, value_name = "SEP")]
+    separator: Option<String>,
 
     /// Root Directory
     pub root: Option<std::path::PathBuf>,
@@ -46,6 +54,7 @@ fn main() {
     if args.help {
         Printer::new(Args::command())
             .with_introduction(INTRO)
+            .show_author(false)
             .print_help();
         return;
     }

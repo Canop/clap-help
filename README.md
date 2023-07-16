@@ -52,7 +52,6 @@ Your program needs a clap `Command` defined.
 
 Here's for example with clap-derive:
 
-
 ```rust
 #[derive(Parser, Debug)]
 #[command(name="area", author, version, about, disable_help_flag = true)]
@@ -70,9 +69,17 @@ struct Args {
     #[arg(short, long, default_value = "3")]
     width: u16,
 
+    /// Whether birds should be killed
+    #[arg(short, long)]
+    kill_birds: bool,
+
     /// Computation strategy
-    #[arg(short, long, default_value = "fast")]
+    #[arg(long, default_value = "fast")]
     strategy: Strategy,
+
+    /// Bird separator
+    #[arg(short, long, value_name = "SEP")]
+    separator: Option<String>,
 
     /// Root Directory
     pub root: Option<std::path::PathBuf>,
@@ -100,6 +107,7 @@ let args = Args::parse();
 if args.help {
     Printer::new(Args::command())
         .with_introduction(INTRO)
+        .show_author(false)
         .print_help();
     return;
 }
@@ -107,10 +115,10 @@ if args.help {
 
 Help rendered in a light terminal:
 
-![area light](doc/area-light.png)
+![area light](doc/area-light.png?v=3)
 
 Same help in a dark terminal:
 
-![area dark](doc/area-dark.png)
+![area dark](doc/area-dark.png?v=3)
 
 Complete example is in `/examples/area`.

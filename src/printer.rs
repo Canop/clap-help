@@ -14,6 +14,7 @@ pub struct Printer {
     skin: MadSkin,
     expander: OwningTemplateExpander<'static>,
     introduction: &'static str,
+    show_author: bool,
 }
 
 pub static TEMPLATE_TITLE: &str = "# **${name}** v${version}";
@@ -33,13 +34,13 @@ ${positional-lines
 pub static TEMPLATE_OPTIONS: &str = "
 
 **Options:**
-|:-:|:-:|:-|
-|short|long|description|
-|:-:|:-|:-|
+|:-:|:-:|:-:|:-|
+|short|long|value|description|
+|:-:|:-|:-:|:-|
 ${option-lines
-|${short}|${long}|${help}${possible_values}${default}|
+|${short}|${long}|${value}|${help}${possible_values}${default}|
 }
-|-|-|-|
+|-
 ";
 
 impl Printer {
@@ -49,6 +50,7 @@ impl Printer {
             skin: Self::make_skin(),
             expander,
             introduction: "",
+            show_author: false,
         }
     }
     /// Build a skin for the detected theme of the terminal
@@ -65,16 +67,21 @@ impl Printer {
         self.skin = skin;
         self
     }
-    /// Set the introduction text, interpreted as Markdown
-    pub fn with_introduction(mut self, intro: &'static str) -> Self {
-        self.introduction = intro;
-        self
-    }
     /// Give a mutable reference to the current skin
     /// (by default the automatically selected one)
     /// so that it can be modified
     pub fn skin_mut(&mut self) -> &mut MadSkin {
         &mut self.skin
+    }
+    /// Set the introduction text, interpreted as Markdown
+    pub fn with_introduction(mut self, intro: &'static str) -> Self {
+        self.introduction = intro;
+        self
+    }
+    /// Set whether to display the application author (default is true)
+    pub fn show_author(mut self, b: bool) -> Self {
+        self.show_author = b;
+        self
     }
     fn make_expander<'c>(cmd: &'c Command) -> OwningTemplateExpander<'static> {
         let mut expander = OwningTemplateExpander::new();
@@ -103,6 +110,11 @@ impl Printer {
             }
             if let Some(help) = arg.get_help() {
                 sub.set("help", help);
+            }
+            if arg.get_action().takes_values() {
+                if let Some(name) = arg.get_value_names().and_then(|arr| arr.get(0)) {
+                    sub.set("value", name);
+                };
             }
             let mut possible_values = arg.get_possible_values();
             if !possible_values.is_empty() {
@@ -154,7 +166,9 @@ impl Printer {
     /// instead.
     pub fn print_help(&self) {
         self.print_template(TEMPLATE_TITLE);
-        self.print_template(TEMPLATE_AUTHOR);
+        if self.show_author {
+            self.print_template(TEMPLATE_AUTHOR);
+        }
         self.skin.print_text(self.introduction);
         self.print_template(TEMPLATE_USAGE);
         self.print_template(TEMPLATE_POSITIONALS);
