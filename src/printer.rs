@@ -2,6 +2,7 @@ use {
     clap::{
         Command,
     },
+    std::fmt::Write,
     termimad::{
         minimad::OwningTemplateExpander,
         MadSkin,
@@ -143,8 +144,11 @@ impl Printer {
             let Some(key) = arg.get_value_names().and_then(|arr| arr.get(0)) else {
                 continue;
             };
-            args.push(' ');
-            args.push_str(key);
+            if arg.is_required_set() {
+                let _ = write!(&mut args, " {}", key);
+            } else {
+                let _ = write!(&mut args, " [{}]", key);
+            }
             let sub = expander.sub("positional-lines");
             sub.set("key", key);
             if let Some(help) = arg.get_help() {
