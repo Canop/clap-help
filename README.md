@@ -116,10 +116,10 @@ if args.help {
 
 Help rendered in a light terminal:
 
-![area light](doc/area-light.png?v=3)
+![area light](doc/area-light.png)
 
 Same help in a dark terminal:
 
-![area dark](doc/area-dark.png?v=3)
+![area dark](doc/area-dark.png)
 
 Complete example is in `/examples/area`.
