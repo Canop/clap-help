@@ -2,28 +2,23 @@ use {
     clap::{
         Command,
     },
-    std::fmt::Write,
+    std::{
+        collections::HashMap,
+        fmt::Write,
+    },
     termimad::{
         minimad::OwningTemplateExpander,
         MadSkin,
     },
 };
 
-/// An object which you can configure to print the
-/// help of a command
-pub struct Printer {
-    skin: MadSkin,
-    expander: OwningTemplateExpander<'static>,
-    introduction: &'static str,
-    show_author: bool,
-}
-
-pub static TEMPLATE_TITLE: &str = "# **${name}** v${version}";
+pub static TEMPLATE_TITLE: &str = "# **${name}** ${version}";
 pub static TEMPLATE_AUTHOR: &str = "
 
 *by* ${author}
 ";
 pub static TEMPLATE_USAGE: &str = "
+
 **Usage: ** `${name} [options]${positional-args}`
 ";
 pub static TEMPLATE_POSITIONALS: &str = "
@@ -44,14 +39,34 @@ ${option-lines
 |-
 ";
 
-impl Printer {
+/// Keys used to enable/disable/change templates
+pub static TEMPLATES: &[&str] = &[
+    "title", "author", "introduction", "usage", "positionals", "options", "bugs",
+];
+
+/// An object which you can configure to print the
+/// help of a command
+pub struct Printer<'t> {
+    skin: MadSkin,
+    expander: OwningTemplateExpander<'static>,
+    template_order: Vec<&'static str>,
+    templates: HashMap<&'static str, &'t str>,
+}
+
+impl<'t> Printer<'t> {
     pub fn new(cmd: Command) -> Self {
         let expander = Self::make_expander(&cmd);
+        let mut templates = HashMap::new();
+        templates.insert("title", TEMPLATE_TITLE);
+        templates.insert("author", TEMPLATE_AUTHOR);
+        templates.insert("usage", TEMPLATE_USAGE);
+        templates.insert("positionals", TEMPLATE_POSITIONALS);
+        templates.insert("options", TEMPLATE_OPTIONS);
         Self {
             skin: Self::make_skin(),
             expander,
-            introduction: "",
-            show_author: false,
+            templates,
+            template_order: TEMPLATES.to_vec(),
         }
     }
     /// Build a skin for the detected theme of the terminal
@@ -74,15 +89,21 @@ impl Printer {
     pub fn skin_mut(&mut self) -> &mut MadSkin {
         &mut self.skin
     }
-    /// Set the introduction text, interpreted as Markdown
-    pub fn with_introduction(mut self, intro: &'static str) -> Self {
-        self.introduction = intro;
+    /// Change a template
+    pub fn with(mut self, key: &'static str, template: &'t str) -> Self {
+        self.templates.insert(key, template);
         self
     }
-    /// Set whether to display the application author (default is true)
-    pub fn show_author(mut self, b: bool) -> Self {
-        self.show_author = b;
+    /// Unset a template
+    pub fn without(mut self, key: &'static str) -> Self {
+        self.templates.remove(key);
         self
+    }
+    /// A mutable reference to the list of template keys, so that you can
+    /// insert new keys, or change their order.
+    /// Any key without matching template will just be ignored
+    pub fn template_order_mut(&mut self) -> &Vec<&'static str> {
+        &mut self.template_order
     }
     fn make_expander<'c>(cmd: &'c Command) -> OwningTemplateExpander<'static> {
         let mut expander = OwningTemplateExpander::new();
@@ -110,7 +131,7 @@ impl Printer {
                 sub.set("long", format!("--{long}"));
             }
             if let Some(help) = arg.get_help() {
-                sub.set("help", help);
+                sub.set_md("help", help.to_string());
             }
             if arg.get_action().takes_values() {
                 if let Some(name) = arg.get_value_names().and_then(|arr| arr.get(0)) {
@@ -158,24 +179,24 @@ impl Printer {
         expander.set("positional-args", args);
         expander
     }
+    /// Give you a mut reference to the expander, so that you can overload
+    /// the variable of the expander used to fill the templates of the help
     pub fn expander_mut(&mut self) -> &mut OwningTemplateExpander<'static> {
         &mut self.expander
     }
+    /// Print the provided template with the printer's expander
+    ///
+    /// It's normally more convenient to change template_order or some
+    /// templates, unless you want none of the standard templates
     pub fn print_template(&self, template: &str) {
         self.skin.print_owning_expander_md(&self.expander, template);
     }
-    /// Print the whole help: title, author, introduction, usage, and options
-    ///
-    /// To print only some parts, or to use custom templates, use `print_template`
-    /// instead.
+    /// Print all the templates, in order
     pub fn print_help(&self) {
-        self.print_template(TEMPLATE_TITLE);
-        if self.show_author {
-            self.print_template(TEMPLATE_AUTHOR);
+        for key in &self.template_order {
+            if let Some(template) = self.templates.get(key) {
+                self.print_template(template);
+            }
         }
-        self.skin.print_text(self.introduction);
-        self.print_template(TEMPLATE_USAGE);
-        self.print_template(TEMPLATE_POSITIONALS);
-        self.print_template(TEMPLATE_OPTIONS);
     }
 }

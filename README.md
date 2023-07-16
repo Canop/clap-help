@@ -21,6 +21,7 @@
 - much more compact: from 2 to 3 times less lines compared to vanilla
 - options rendered in a balanced table, optimized for the width of the terminal
 - introduction interpreted as Markdown, allowing lists, tables, code blocks, etc.
+- doc of options interpreted as Markdown
 - skin automatically selected for light or dark terminals
 - customizable [termimad](https://github.com/Canop/termimad/) skin
 - (slightly) customizable templates
@@ -65,11 +66,11 @@ struct Args {
     #[arg(short, long, default_value = "9")]
     height: u16,
 
-    /// Width, from there, to there
+    /// Width, from there, to there, eg `4` or `5`
     #[arg(short, long, default_value = "3")]
     width: u16,
 
-    /// Whether birds should be killed
+    /// Kill all birds to improve computation
     #[arg(short, long)]
     kill_birds: bool,
 
@@ -106,8 +107,8 @@ On program launch, you should check the value of the `help` flag and, if necessa
 let args = Args::parse();
 if args.help {
     Printer::new(Args::command())
-        .with_introduction(INTRO)
-        .show_author(false)
+        .with("introduction", INTRO)
+        .without("author")
         .print_help();
     return;
 }

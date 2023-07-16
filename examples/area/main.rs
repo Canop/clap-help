@@ -4,9 +4,9 @@ use {
 };
 
 static INTRO: &str = "
+
 Compute `height x width`
 *You can do it either precisely (enough) or fast (I mean not too slow)*.
-
 ";
 
 /// Application launch arguments
@@ -22,11 +22,11 @@ struct Args {
     #[arg(short, long, default_value = "9")]
     height: u16,
 
-    /// Width, from there, to there
+    /// Width, from there, to there, eg `4` or `5`
     #[arg(short, long, default_value = "3")]
     width: u16,
 
-    /// Whether birds should be killed
+    /// Kill all birds to improve computation
     #[arg(short, long)]
     kill_birds: bool,
 
@@ -53,8 +53,8 @@ fn main() {
 
     if args.help {
         Printer::new(Args::command())
-            .with_introduction(INTRO)
-            .show_author(false)
+            .with("introduction", INTRO)
+            .without("author")
             .print_help();
         return;
     }

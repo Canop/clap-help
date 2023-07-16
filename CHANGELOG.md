@@ -1,3 +1,7 @@
+<a name="v0.4.0"></a>
+### v0.4.0 - 2023-07-16
+- templates and their order can be completely customized
+
 <a name="v0.3.0"></a>
 ### v0.3.0 - 2023-07-16
 - optional positional arguments displayed between square braces
