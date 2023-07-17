@@ -24,7 +24,7 @@
 - doc of options interpreted as Markdown
 - skin automatically selected for light or dark terminals
 - customizable [termimad](https://github.com/Canop/termimad/) skin
-- (slightly) customizable templates
+- you can customize section templates, remove them, reorder them, add sections
 
 **clap-help** is especially suited to small terminals or big numbers of options.
 
@@ -89,7 +89,7 @@ struct Args {
 
 Notice
 * the `disable_help_flag = true` disabling the standard behaviour of clap regarding help.
-* the explicit `help` argument. Here it's with only `#[arg(long)]` because `-h` is used for something more important but you would most ofte have `#[arg(short, long)]`.
+* the explicit `help` argument. Here it's with only `#[arg(long)]` because `-h` is used for something more important but you would most often have `#[arg(short, long)]`.
 
 The help introduction (the part before usage) is defined as a string which will be interpreted as Markdown. It can contain tables, lists, bold, italic, inline code, code blocks, etc.
 
