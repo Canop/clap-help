@@ -95,9 +95,9 @@ The help introduction (the part before usage) is defined as a string which will 
 
 ```rust
 static INTRO: &str = "
-Compute height x width
-*You can do it either precisely (enough) or fast (I mean not too slow)*.
 
+Compute `height x width`
+*You can do it either precisely (enough) or fast (I mean not too slow)*.
 ";
 ```
 
