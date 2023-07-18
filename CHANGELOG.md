@@ -1,3 +1,7 @@
+<a name="v0.5.0"></a>
+### v0.5.0 - 2023-07-18
+- add `--` before the last args
+
 <a name="v0.4.0"></a>
 ### v0.4.0 - 2023-07-16
 - templates and their order can be completely customized

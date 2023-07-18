@@ -4,7 +4,6 @@ use {
     },
     std::{
         collections::HashMap,
-        fmt::Write,
     },
     termimad::{
         minimad::OwningTemplateExpander,
@@ -165,10 +164,16 @@ impl<'t> Printer<'t> {
             let Some(key) = arg.get_value_names().and_then(|arr| arr.get(0)) else {
                 continue;
             };
-            if arg.is_required_set() {
-                let _ = write!(&mut args, " {}", key);
-            } else {
-                let _ = write!(&mut args, " [{}]", key);
+            args.push(' ');
+            if !arg.is_required_set() {
+                args.push('[');
+            }
+            if arg.is_last_set() {
+                args.push_str("-- ");
+            }
+            args.push_str(key);
+            if !arg.is_required_set() {
+                args.push(']');
             }
             let sub = expander.sub("positional-lines");
             sub.set("key", key);
