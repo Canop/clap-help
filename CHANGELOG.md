@@ -1,3 +1,7 @@
+<a name="v0.6.1"></a>
+### v0.6.1 - 2023-08-02
+- `set_max_width` forces wrapping for a width smaller than the terminal's width
+
 <a name="v0.6.0"></a>
 ### v0.6.0 - 2023-08-02
 - place centered titles based on the content's width, not the terminal's width

@@ -61,6 +61,7 @@ pub struct Printer<'t> {
     template_order: Vec<&'static str>,
     templates: HashMap<&'static str, &'t str>,
     pub full_width: bool,
+    pub max_width: Option<usize>,
 }
 
 impl<'t> Printer<'t> {
@@ -78,6 +79,7 @@ impl<'t> Printer<'t> {
             templates,
             template_order: TEMPLATES.to_vec(),
             full_width: false,
+            max_width: None,
         }
     }
     /// Build a skin for the detected theme of the terminal
@@ -92,6 +94,16 @@ impl<'t> Printer<'t> {
     /// Use the provided skin
     pub fn with_skin(mut self, skin: MadSkin) -> Self {
         self.skin = skin;
+        self
+    }
+    /// Set a maximal width, so that the whole terminal width isn't used.
+    ///
+    /// This may make some long sentences easier to read on super wide
+    /// terminals, especially when the whole text is short.
+    /// Depending on your texts and parameters, you may set up a width
+    /// of 100 or 150.
+    pub fn with_max_width(mut self, w: usize) -> Self {
+        self.max_width = Some(w);
         self
     }
     /// Give a mutable reference to the current skin
@@ -226,7 +238,10 @@ impl<'t> Printer<'t> {
     }
     fn print_help_content_width(&self) {
         let (width, _) = termimad::terminal_size();
-        let terminal_width = width as usize;
+        let mut width = width as usize;
+        if let Some(max_width) = self.max_width {
+            width = width.min(max_width);
+        }
         let mut texts: Vec<FmtText> = self
             .template_order
             .iter()
@@ -234,7 +249,7 @@ impl<'t> Printer<'t> {
             .map(|&template| {
                 let template = TextTemplate::from(template);
                 let text = self.expander.expand(&template);
-                FmtText::from_text(&self.skin, text, Some(terminal_width))
+                FmtText::from_text(&self.skin, text, Some(width))
             })
             .collect();
         let content_width = texts
