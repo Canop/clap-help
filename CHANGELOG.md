@@ -1,3 +1,7 @@
+<a name="v0.6.0"></a>
+### v0.6.0 - 2023-08-02
+- place centered titles based on the content's width, not the terminal's width
+
 <a name="v0.5.0"></a>
 ### v0.5.0 - 2023-07-18
 - add `--` before the last args

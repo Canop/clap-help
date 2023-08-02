@@ -6,7 +6,8 @@ use {
         collections::HashMap,
     },
     termimad::{
-        minimad::OwningTemplateExpander,
+        minimad::{OwningTemplateExpander, TextTemplate},
+        FmtText,
         MadSkin,
     },
 };
@@ -50,6 +51,7 @@ pub struct Printer<'t> {
     expander: OwningTemplateExpander<'static>,
     template_order: Vec<&'static str>,
     templates: HashMap<&'static str, &'t str>,
+    pub full_width: bool,
 }
 
 impl<'t> Printer<'t> {
@@ -66,6 +68,7 @@ impl<'t> Printer<'t> {
             expander,
             templates,
             template_order: TEMPLATES.to_vec(),
+            full_width: false,
         }
     }
     /// Build a skin for the detected theme of the terminal
@@ -104,7 +107,7 @@ impl<'t> Printer<'t> {
     pub fn template_order_mut(&mut self) -> &Vec<&'static str> {
         &mut self.template_order
     }
-    fn make_expander<'c>(cmd: &'c Command) -> OwningTemplateExpander<'static> {
+    fn make_expander(cmd: & Command) -> OwningTemplateExpander<'static> {
         let mut expander = OwningTemplateExpander::new();
         expander.set_default("");
         let name = cmd.get_bin_name()
@@ -198,10 +201,38 @@ impl<'t> Printer<'t> {
     }
     /// Print all the templates, in order
     pub fn print_help(&self) {
+        if self.full_width {
+            self.print_help_full_width()
+        } else {
+            self.print_help_content_width()
+        }
+    }
+    fn print_help_full_width(&self) {
         for key in &self.template_order {
             if let Some(template) = self.templates.get(key) {
                 self.print_template(template);
             }
+        }
+    }
+    fn print_help_content_width(&self) {
+        let (width, _) = termimad::terminal_size();
+        let terminal_width = width as usize;
+        let mut texts: Vec<FmtText> = self
+            .template_order
+            .iter()
+            .filter_map(|key| self.templates.get(key))
+            .map(|&template| {
+                let template = TextTemplate::from(template);
+                let text = self.expander.expand(&template);
+                FmtText::from_text(&self.skin, text, Some(terminal_width))
+            })
+            .collect();
+        let content_width = texts
+            .iter()
+            .fold(0, |cw, text| cw.max(text.content_width()));
+        for text in &mut texts {
+            text.set_rendering_width(content_width);
+            print!("{}", text);
         }
     }
 }
