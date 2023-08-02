@@ -12,21 +12,30 @@ use {
     },
 };
 
+/// Default template for the "title" section
 pub static TEMPLATE_TITLE: &str = "# **${name}** ${version}";
+
+/// Default template for the "author" section
 pub static TEMPLATE_AUTHOR: &str = "
 
 *by* ${author}
 ";
+
+/// Default template for the "usage" section
 pub static TEMPLATE_USAGE: &str = "
 
 **Usage: ** `${name} [options]${positional-args}`
 ";
+
+/// Default template for the "positionals" section
 pub static TEMPLATE_POSITIONALS: &str = "
 
 ${positional-lines
 * `${key}` : ${help}
 }
 ";
+
+/// Default template for the "options" section
 pub static TEMPLATE_OPTIONS: &str = "
 
 **Options:**
@@ -188,7 +197,8 @@ impl<'t> Printer<'t> {
         expander
     }
     /// Give you a mut reference to the expander, so that you can overload
-    /// the variable of the expander used to fill the templates of the help
+    /// the variable of the expander used to fill the templates of the help,
+    /// or add new variables for your own templates
     pub fn expander_mut(&mut self) -> &mut OwningTemplateExpander<'static> {
         &mut self.expander
     }

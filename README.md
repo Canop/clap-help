@@ -49,6 +49,8 @@ This comparison uses the [broot](https://github.com/Canop/broot) program.
 
 ## Usage
 
+### Basic usage
+
 Your program needs a clap `Command` defined.
 
 Here's for example with clap-derive:
@@ -122,4 +124,78 @@ Same help in a dark terminal:
 
 ![area dark](doc/area-dark.png)
 
-Complete example is in `/examples/area`.
+Complete example is in `/examples/area` and can be seen with `cargo run --example area -- --help`
+
+### Changing the skin
+
+If your program has some kind of graphical identity, you may want to extend it to the help.
+
+This is the case of [bacon](https://dystroy.org/bacon) which features this kind of saturated pink that kids associate to pigs.
+
+This change was easily done by setting the [color](https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit) of first level headers and bold:
+
+```rust
+let mut printer = clap_help::Printer::new(Args::command())
+    .with("introduction", INTRO)
+    .without("author");
+let skin = printer.skin_mut();
+skin.headers[0].compound_style.set_fg(ansi(204));
+skin.bold.set_fg(ansi(204));
+printer.print_help();
+```
+
+Result:
+
+![bacon](doc/bacon.png)
+
+### Customizing more: changing both the skin and the templates
+
+The example in `examples/custom` mainly features:
+
+* less restreint on the colors
+* a removal of the `value` column
+
+![custom](doc/custom.png)
+
+The strategy for those changes is
+
+* to redefine the `bold`, `italic`, and `inline_code` styles to change their foreground color, to remove the background of the code, and to remove the Italic attribute of `italic`
+* to change the `"options"` template so that `${short}` and `${long}` are in italic (i.e. between stars in Markdown)
+* to modify the template to remove the unwanted column
+
+Here's the relevant parts of the code:
+
+
+```rust
+pub static TEMPLATE_OPTIONS: &str = "
+
+**Options:**
+|:-:|:-:|:-|
+|short|long|what it does|
+|:-:|:-|:-|
+${option-lines
+|*${short}*|*${long}*|${help}${possible_values}${default}|
+}
+|-
+";
+```
+
+```rust
+let mut printer = Printer::new(Args::command())
+    .without("author")
+    .with("introduction", INTRO)
+    .with("options", TEMPLATE_OPTIONS);
+let skin = printer.skin_mut();
+skin.headers[0].compound_style.set_fg(ansi(202));
+skin.bold.set_fg(ansi(202));
+skin.italic = termimad::CompoundStyle::with_fg(ansi(45));
+skin.inline_code = termimad::CompoundStyle::with_fg(ansi(223));
+printer.print_help();
+```
+
+Complete example is in `/examples/custom` and can be seen with `cargo run --example custom -- --help`
+
+Please note that not every customization is possible or easy with the current clap-help.
+And some may be easy but not obvious.
+Come to the chat and ask if needed.
+
