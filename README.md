@@ -126,6 +126,49 @@ Same help in a dark terminal:
 
 Complete example is in `/examples/area` and can be seen with `cargo run --example area -- --help`
 
+### Adding custom sections
+
+Help is usually easier to grasp with a few examples.
+You can write a few ones in your intro, or you can add them in a later section, after the options.
+
+It's also possible to leverage the template system, which is what is done in the `with-examples` example, for this result:
+
+![with-examples](doc/with-examples.png)
+
+Here's how it's done:
+
+```rust
+static EXAMPLES_TEMPLATE: &str = "
+**Examples:**
+
+${examples
+**${example-number})** ${example-title}: `${example-cmd}`
+${example-comments}
+}
+";
+```
+
+```rust
+
+let mut printer = clap_help::Printer::new(Args::command())
+    .with("introduction", INTRO_TEMPLATE)
+    .without("author");
+printer.template_keys_mut().push("examples");
+printer.set_template("examples", EXAMPLES_TEMPLATE);
+for (i, example) in EXAMPLES.iter().enumerate() {
+    printer
+        .expander_mut()
+        .sub("examples")
+        .set("example-number", i + 1)
+        .set("example-title", example.title)
+        .set("example-cmd", example.cmd)
+        .set_md("example-comments", example.comments);
+}
+printer.print_help();
+```
+
+[complete code of the example](examples/with-examples/main.rs)
+
 ### Changing the skin
 
 If your program has some kind of graphical identity, you may want to extend it to the help.
@@ -163,7 +206,7 @@ The strategy for those changes is
 * to change the `"options"` template so that `${short}` and `${long}` are in italic (i.e. between stars in Markdown)
 * to modify the template to remove the unwanted column
 
-Here's the relevant parts of the code:
+Here are the relevant parts of the code:
 
 
 ```rust

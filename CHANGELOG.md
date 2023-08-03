@@ -1,3 +1,8 @@
+<a name="v0.6.2"></a>
+### v0.6.2 - 2023-08-03
+- fix template_order_mut not returning a mut reference. Rename the method to template_keys_mut
+- demonstrate how to add Examples with a template after the Options table
+
 <a name="v0.6.1"></a>
 ### v0.6.1 - 2023-08-02
 - `set_max_width` forces wrapping for a width smaller than the terminal's width

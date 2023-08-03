@@ -17,19 +17,16 @@ pub static TEMPLATE_TITLE: &str = "# **${name}** ${version}";
 
 /// Default template for the "author" section
 pub static TEMPLATE_AUTHOR: &str = "
-
 *by* ${author}
 ";
 
 /// Default template for the "usage" section
 pub static TEMPLATE_USAGE: &str = "
-
 **Usage: ** `${name} [options]${positional-args}`
 ";
 
 /// Default template for the "positionals" section
 pub static TEMPLATE_POSITIONALS: &str = "
-
 ${positional-lines
 * `${key}` : ${help}
 }
@@ -37,7 +34,6 @@ ${positional-lines
 
 /// Default template for the "options" section
 pub static TEMPLATE_OPTIONS: &str = "
-
 **Options:**
 |:-:|:-:|:-:|:-|
 |short|long|value|description|
@@ -58,7 +54,7 @@ pub static TEMPLATES: &[&str] = &[
 pub struct Printer<'t> {
     skin: MadSkin,
     expander: OwningTemplateExpander<'static>,
-    template_order: Vec<&'static str>,
+    template_keys: Vec<&'static str>,
     templates: HashMap<&'static str, &'t str>,
     pub full_width: bool,
     pub max_width: Option<usize>,
@@ -77,7 +73,7 @@ impl<'t> Printer<'t> {
             skin: Self::make_skin(),
             expander,
             templates,
-            template_order: TEMPLATES.to_vec(),
+            template_keys: TEMPLATES.to_vec(),
             full_width: false,
             max_width: None,
         }
@@ -113,8 +109,12 @@ impl<'t> Printer<'t> {
         &mut self.skin
     }
     /// Change a template
-    pub fn with(mut self, key: &'static str, template: &'t str) -> Self {
+    pub fn set_template(&mut self, key: &'static str, template: &'t str) {
         self.templates.insert(key, template);
+    }
+    /// Change or add a template
+    pub fn with(mut self, key: &'static str, template: &'t str) -> Self {
+        self.set_template(key, template);
         self
     }
     /// Unset a template
@@ -125,8 +125,15 @@ impl<'t> Printer<'t> {
     /// A mutable reference to the list of template keys, so that you can
     /// insert new keys, or change their order.
     /// Any key without matching template will just be ignored
-    pub fn template_order_mut(&mut self) -> &Vec<&'static str> {
-        &mut self.template_order
+    pub fn template_keys_mut(&mut self) -> &mut Vec<&'static str> {
+        &mut self.template_keys
+    }
+    /// A mutable reference to the list of template keys, so that you can
+    /// insert new keys, or change their order.
+    /// Any key without matching template will just be ignored
+    #[deprecated(since = "0.6.2", note = "use template_keys_mut instead")]
+    pub fn template_order_mut(&mut self) -> &mut Vec<&'static str> {
+        &mut self.template_keys
     }
     fn make_expander(cmd: & Command) -> OwningTemplateExpander<'static> {
         let mut expander = OwningTemplateExpander::new();
@@ -216,7 +223,7 @@ impl<'t> Printer<'t> {
     }
     /// Print the provided template with the printer's expander
     ///
-    /// It's normally more convenient to change template_order or some
+    /// It's normally more convenient to change template_keys or some
     /// templates, unless you want none of the standard templates
     pub fn print_template(&self, template: &str) {
         self.skin.print_owning_expander_md(&self.expander, template);
@@ -230,7 +237,7 @@ impl<'t> Printer<'t> {
         }
     }
     fn print_help_full_width(&self) {
-        for key in &self.template_order {
+        for key in &self.template_keys {
             if let Some(template) = self.templates.get(key) {
                 self.print_template(template);
             }
@@ -243,7 +250,7 @@ impl<'t> Printer<'t> {
             width = width.min(max_width);
         }
         let mut texts: Vec<FmtText> = self
-            .template_order
+            .template_keys
             .iter()
             .filter_map(|key| self.templates.get(key))
             .map(|&template| {
@@ -257,7 +264,7 @@ impl<'t> Printer<'t> {
             .fold(0, |cw, text| cw.max(text.content_width()));
         for text in &mut texts {
             text.set_rendering_width(content_width);
-            print!("{}", text);
+            println!("{}", text);
         }
     }
 }
