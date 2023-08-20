@@ -27,6 +27,10 @@ struct Args {
     #[arg(long)]
     help: bool,
 
+    /// Only use ASCII characters
+    #[arg(long)]
+    ascii: bool,
+
     /// Height, that is the distance between bottom and top
     #[arg(short, long, default_value = "9")]
     height: u16,
@@ -51,9 +55,13 @@ enum Strategy {
 
 
 pub fn print_help() {
+    let args = Args::parse();
     let mut printer = clap_help::Printer::new(Args::command())
         .with("introduction", INTRO_TEMPLATE)
         .without("author");
+    if args.ascii {
+        printer.skin_mut().limit_to_ascii();
+    }
     printer.template_keys_mut().push("examples");
     printer.set_template("examples", EXAMPLES_TEMPLATE);
     for (i, example) in EXAMPLES.iter().enumerate() {

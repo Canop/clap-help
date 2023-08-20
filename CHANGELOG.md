@@ -1,3 +1,7 @@
+<a name="v0.7.0"></a>
+### v0.7.0 - 2023-08-20
+- upgrade termimad to 0.25 for `skin.limit_to_ascii` (see with-examples example)
+
 <a name="v0.6.2"></a>
 ### v0.6.2 - 2023-08-03
 - fix template_order_mut not returning a mut reference. Rename the method to template_keys_mut
