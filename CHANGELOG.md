@@ -1,3 +1,8 @@
+
+<a name="1.0.0"></a>
+### v1.0.0 - 2023-09-02
+- clap-help is ready for 1.0 - no change is planned
+
 <a name="v0.7.0"></a>
 ### v0.7.0 - 2023-08-20
 - upgrade termimad to 0.25 for `skin.limit_to_ascii` (see with-examples example)

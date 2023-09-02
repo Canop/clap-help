@@ -10,9 +10,8 @@ Compute `height x width`
 
 /// Application launch arguments
 #[derive(Parser, Debug)]
-#[command(name="area", author, version, about, disable_help_flag = true)]
+#[command(name = "area", author, version, about, disable_help_flag = true)]
 struct Args {
-
     /// Print help
     #[arg(long)]
     help: bool,
@@ -60,6 +59,5 @@ fn main() {
 
     let (w, h) = (args.width, args.height);
     println!("Computation strategy: {:?}", args.strategy);
-    println!("{w} x {h} = {}", w*h);
+    println!("{w} x {h} = {}", w * h);
 }
-

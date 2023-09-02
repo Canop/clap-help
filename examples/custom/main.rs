@@ -22,12 +22,10 @@ ${option-lines
 |-
 ";
 
-
 /// Application launch arguments
 #[derive(Parser, Debug)]
-#[command(name="custom", author, version, about, disable_help_flag = true)]
+#[command(name = "custom", author, version, about, disable_help_flag = true)]
 struct Args {
-
     /// Print help
     #[arg(long)]
     help: bool,
@@ -75,12 +73,12 @@ fn main() {
         skin.bold.set_fg(ansi(202));
         skin.italic = termimad::CompoundStyle::with_fg(ansi(45));
         skin.inline_code = termimad::CompoundStyle::with_fg(ansi(223));
+        skin.table_border_chars = termimad::ROUNDED_TABLE_BORDER_CHARS;
         printer.print_help();
         return;
     }
 
     let (w, h) = (args.width, args.height);
     println!("Computation strategy: {:?}", args.strategy);
-    println!("{w} x {h} = {}", w*h);
+    println!("{w} x {h} = {}", w * h);
 }
-

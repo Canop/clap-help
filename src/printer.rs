@@ -1,14 +1,9 @@
 use {
-    clap::{
-        Command,
-    },
-    std::{
-        collections::HashMap,
-    },
+    clap::Command,
+    std::collections::HashMap,
     termimad::{
         minimad::{OwningTemplateExpander, TextTemplate},
-        FmtText,
-        MadSkin,
+        FmtText, MadSkin,
     },
 };
 
@@ -46,7 +41,13 @@ ${option-lines
 
 /// Keys used to enable/disable/change templates
 pub static TEMPLATES: &[&str] = &[
-    "title", "author", "introduction", "usage", "positionals", "options", "bugs",
+    "title",
+    "author",
+    "introduction",
+    "usage",
+    "positionals",
+    "options",
+    "bugs",
 ];
 
 /// An object which you can configure to print the
@@ -135,11 +136,10 @@ impl<'t> Printer<'t> {
     pub fn template_order_mut(&mut self) -> &mut Vec<&'static str> {
         &mut self.template_keys
     }
-    fn make_expander(cmd: & Command) -> OwningTemplateExpander<'static> {
+    fn make_expander(cmd: &Command) -> OwningTemplateExpander<'static> {
         let mut expander = OwningTemplateExpander::new();
         expander.set_default("");
-        let name = cmd.get_bin_name()
-            .unwrap_or_else(|| cmd.get_name());
+        let name = cmd.get_bin_name().unwrap_or_else(|| cmd.get_name());
         expander.set("name", name);
         if let Some(author) = cmd.get_author() {
             expander.set("author", author);
@@ -149,9 +149,7 @@ impl<'t> Printer<'t> {
         }
         let options = cmd
             .get_arguments()
-            .filter(|a|
-                a.get_short().is_some() || a.get_long().is_some()
-            );
+            .filter(|a| a.get_short().is_some() || a.get_long().is_some());
         for arg in options {
             let sub = expander.sub("option-lines");
             if let Some(short) = arg.get_short() {
@@ -174,20 +172,16 @@ impl<'t> Printer<'t> {
                     .drain(..)
                     .map(|v| format!("`{}`", v.get_name()))
                     .collect();
-                expander
-                    .sub("option-lines")
-                    .set_md(
-                        "possible_values",
-                        format!(" Possible values: [{}]", possible_values.join(", ")),
-                    );
+                expander.sub("option-lines").set_md(
+                    "possible_values",
+                    format!(" Possible values: [{}]", possible_values.join(", ")),
+                );
             }
             if let Some(default) = arg.get_default_values().get(0) {
-                expander
-                    .sub("option-lines")
-                    .set_md(
-                        "default",
-                        format!(" Default: `{}`", default.to_string_lossy()),
-                    );
+                expander.sub("option-lines").set_md(
+                    "default",
+                    format!(" Default: `{}`", default.to_string_lossy()),
+                );
             }
         }
         let mut args = String::new();

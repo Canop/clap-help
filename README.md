@@ -18,7 +18,7 @@
 ### Differences with the vanilla help renderer of the clap crate:
 
 - more readable, thanks to a width aware layout
-- much more compact: from 2 to 3 times less lines compared to vanilla
+- more compact: from 2 to 3 times less lines compared to vanilla
 - options rendered in a balanced table, optimized for the width of the terminal
 - introduction interpreted as Markdown, allowing lists, tables, code blocks, etc.
 - doc of options interpreted as Markdown
@@ -28,10 +28,7 @@
 
 **clap-help** is especially suited to small terminals or big numbers of options.
 
-### Not (yet) supported:
-
-- subcommands
-- your use case, maybe, because clap-help hasn't been used in many programs and each one is different; come to the chat and ask if needed
+Note: there's no support for subcommands, create an issue if you need it.
 
 ## Comparison
 
@@ -238,7 +235,7 @@ printer.print_help();
 
 Complete example is in `/examples/custom` and can be seen with `cargo run --example custom -- --help`
 
-Please note that not every customization is possible or easy with the current clap-help.
+Please note that not every customization is possible or easy.
 And some may be easy but not obvious.
 Come to the chat and ask if needed.
 

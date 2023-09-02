@@ -20,9 +20,8 @@ ${example-comments}
 
 /// Application launch arguments
 #[derive(Parser, Debug)]
-#[command(name="withex", author, version, about, disable_help_flag = true)]
+#[command(name = "withex", author, version, about, disable_help_flag = true)]
 struct Args {
-
     /// Print help
     #[arg(long)]
     help: bool,
@@ -53,7 +52,6 @@ enum Strategy {
     Precise,
 }
 
-
 pub fn print_help() {
     let args = Args::parse();
     let mut printer = clap_help::Printer::new(Args::command())
@@ -76,7 +74,6 @@ pub fn print_help() {
     printer.print_help();
 }
 
-
 fn main() {
     let args = Args::parse();
 
@@ -87,6 +84,5 @@ fn main() {
 
     let (w, h) = (args.width, args.height);
     println!("Computation strategy: {:?}", args.strategy);
-    println!("{w} x {h} = {}", w*h);
+    println!("{w} x {h} = {}", w * h);
 }
-
