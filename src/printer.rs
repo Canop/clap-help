@@ -162,7 +162,7 @@ impl<'t> Printer<'t> {
                 sub.set_md("help", help.to_string());
             }
             if arg.get_action().takes_values() {
-                if let Some(name) = arg.get_value_names().and_then(|arr| arr.get(0)) {
+                if let Some(name) = arg.get_value_names().and_then(|arr| arr.first()) {
                     sub.set("value", name);
                 };
             }
@@ -177,7 +177,7 @@ impl<'t> Printer<'t> {
                     format!(" Possible values: [{}]", possible_values.join(", ")),
                 );
             }
-            if let Some(default) = arg.get_default_values().get(0) {
+            if let Some(default) = arg.get_default_values().first() {
                 expander.sub("option-lines").set_md(
                     "default",
                     format!(" Default: `{}`", default.to_string_lossy()),
@@ -186,7 +186,7 @@ impl<'t> Printer<'t> {
         }
         let mut args = String::new();
         for arg in cmd.get_positionals() {
-            let Some(key) = arg.get_value_names().and_then(|arr| arr.get(0)) else {
+            let Some(key) = arg.get_value_names().and_then(|arr| arr.first()) else {
                 continue;
             };
             args.push(' ');

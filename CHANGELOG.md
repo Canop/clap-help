@@ -1,4 +1,8 @@
 
+<a name="1.1.0"></a>
+### v1.1.0 - 2024-01-18
+- update termimad dependency to 0.28
+
 <a name="1.0.0"></a>
 ### v1.0.0 - 2023-09-02
 - clap-help is ready for 1.0 - no change is planned
