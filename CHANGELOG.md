@@ -1,4 +1,8 @@
 
+<a name="1.1.1"></a>
+### v1.1.1 - 2024-01-29
+- list items indented as blocks
+
 <a name="1.1.0"></a>
 ### v1.1.0 - 2024-01-18
 - update termimad dependency to 0.28
