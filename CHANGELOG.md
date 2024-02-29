@@ -1,3 +1,5 @@
+### next
+- fix some unwanted possible values and default values with clap 4.4.14+ - Fix #2
 
 <a name="1.1.1"></a>
 ### v1.1.1 - 2024-01-29
