@@ -1,5 +1,5 @@
 use {
-    clap::Command,
+    clap::{ArgAction, Command},
     std::collections::HashMap,
     termimad::{
         minimad::{OwningTemplateExpander, TextTemplate},
@@ -177,11 +177,16 @@ impl<'t> Printer<'t> {
                     "possible_values",
                     format!(" Possible values: [{}]", possible_values.join(", ")),
                 );
-                if let Some(default) = arg.get_default_values().first() {
-                    expander.sub("option-lines").set_md(
-                        "default",
-                        format!(" Default: `{}`", default.to_string_lossy()),
-                    );
+            }
+            if let Some(default) = arg.get_default_values().first() {
+                match arg.get_action() {
+                    ArgAction::Set | ArgAction::Append => {
+                        expander.sub("option-lines").set_md(
+                            "default",
+                            format!(" Default: `{}`", default.to_string_lossy()),
+                        );
+                    }
+                    _ => {}
                 }
             }
         }
