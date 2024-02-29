@@ -1,5 +1,5 @@
 use {
-    clap::Command,
+    clap::{ArgAction, Command},
     std::collections::HashMap,
     termimad::{
         minimad::{OwningTemplateExpander, TextTemplate},
@@ -62,7 +62,8 @@ pub struct Printer<'t> {
 }
 
 impl<'t> Printer<'t> {
-    pub fn new(cmd: Command) -> Self {
+    pub fn new(mut cmd: Command) -> Self {
+        cmd.build();
         let expander = Self::make_expander(&cmd);
         let mut templates = HashMap::new();
         templates.insert("title", TEMPLATE_TITLE);
@@ -178,10 +179,15 @@ impl<'t> Printer<'t> {
                 );
             }
             if let Some(default) = arg.get_default_values().first() {
-                expander.sub("option-lines").set_md(
-                    "default",
-                    format!(" Default: `{}`", default.to_string_lossy()),
-                );
+                match arg.get_action() {
+                    ArgAction::Set | ArgAction::Append => {
+                        expander.sub("option-lines").set_md(
+                            "default",
+                            format!(" Default: `{}`", default.to_string_lossy()),
+                        );
+                    }
+                    _ => {}
+                }
             }
         }
         let mut args = String::new();
