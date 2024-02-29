@@ -62,7 +62,8 @@ pub struct Printer<'t> {
 }
 
 impl<'t> Printer<'t> {
-    pub fn new(cmd: Command) -> Self {
+    pub fn new(mut cmd: Command) -> Self {
+        cmd.build();
         let expander = Self::make_expander(&cmd);
         let mut templates = HashMap::new();
         templates.insert("title", TEMPLATE_TITLE);
@@ -176,12 +177,12 @@ impl<'t> Printer<'t> {
                     "possible_values",
                     format!(" Possible values: [{}]", possible_values.join(", ")),
                 );
-            }
-            if let Some(default) = arg.get_default_values().first() {
-                expander.sub("option-lines").set_md(
-                    "default",
-                    format!(" Default: `{}`", default.to_string_lossy()),
-                );
+                if let Some(default) = arg.get_default_values().first() {
+                    expander.sub("option-lines").set_md(
+                        "default",
+                        format!(" Default: `{}`", default.to_string_lossy()),
+                    );
+                }
             }
         }
         let mut args = String::new();
