@@ -29,15 +29,15 @@
 - customizable [termimad](https://github.com/Canop/termimad/) skin
 - you can customize section templates, remove them, reorder them, add sections
 
-**clap-help** is especially suited to small terminals or big numbers of options.
-
 Note: there's no support for subcommands yet.
 
 ## Example
 
-The [bacon](https://dystroy.org/bacon) programs uses clap-help with an introduction text, a clearer options table, examples, and a skin consistent with the rest of the application
+The [bacon](https://dystroy.org/bacon) programs uses clap-help with an introduction text, a clearer options table, examples, and a skin consistent with the rest of the application:
 
 ![bacon](doc/bacon.png)
+
+How it's done: [https://github.com/Canop/bacon/blob/main/src/args.rs](https://github.com/Canop/bacon/blob/main/src/args.rs).
 
 ## Usage
 
