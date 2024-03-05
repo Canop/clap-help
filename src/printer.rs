@@ -39,6 +39,18 @@ ${option-lines
 |-
 ";
 
+/// a template for the "options" section with the value merged to short and long
+pub static TEMPLATE_OPTIONS_MERGED_VALUE: &str = "
+**Options:**
+|:-:|:-:|:-|
+|short|long|description|
+|:-:|:-|:-|
+${option-lines
+|${short} *${value-short-braced}*|${long} *${value-long-braced}*|${help}${possible_values}${default}|
+}
+|-
+";
+
 /// Keys used to enable/disable/change templates
 pub static TEMPLATES: &[&str] = &[
     "title",
@@ -50,8 +62,41 @@ pub static TEMPLATES: &[&str] = &[
     "bugs",
 ];
 
-/// An object which you can configure to print the
-/// help of a command
+/// An object which you can configure to print the help of a command
+///
+/// For example, changing the color of bold text and using an alternate
+///   template for the options section:
+///
+/// ```rust
+/// use clap::{CommandFactory, Parser, ValueEnum};
+/// use clap_help::Printer;
+///
+/// #[derive(Parser, Debug)]
+/// #[command(author, version, about, disable_help_flag = true)]
+/// struct Args {
+///
+///     /// Print help
+///     #[arg(long)]
+///     help: bool,
+///
+///     /// Comma separated list of features
+///     #[clap(long, value_name = "features")]
+///     pub features: Option<String>,
+/// }
+///
+/// fn main() {
+///     let args = Args::parse();
+///     if args.help {
+///         let mut printer = clap_help::Printer::new(Args::command())
+///             .with("options", clap_help::TEMPLATE_OPTIONS_MERGED_VALUE);
+///         printer.skin_mut().bold.set_fg(ansi(204));
+///         printer.print_help();
+///         return;
+///     }
+///     // rest of the program
+/// }
+///
+/// ```
 pub struct Printer<'t> {
     skin: MadSkin,
     expander: OwningTemplateExpander<'static>,
@@ -165,6 +210,16 @@ impl<'t> Printer<'t> {
             if arg.get_action().takes_values() {
                 if let Some(name) = arg.get_value_names().and_then(|arr| arr.first()) {
                     sub.set("value", name);
+                    let braced = format!("<{}>", name);
+                    sub.set("value-braced", &braced);
+                    if arg.get_short().is_some() {
+                        sub.set("value-short-braced", &braced);
+                        sub.set("value-short", name);
+                    }
+                    if arg.get_long().is_some() {
+                        sub.set("value-long-braced", &braced);
+                        sub.set("value-long", name);
+                    }
                 };
             }
             let mut possible_values = arg.get_possible_values();

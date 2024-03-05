@@ -10,18 +10,6 @@ Compute `height x width`
 More info at *https://dystroy.org*
 ";
 
-pub static TEMPLATE_OPTIONS: &str = "
-
-**Options:**
-|:-:|:-:|:-|
-|short|long|what it does|
-|:-:|:-|:-|
-${option-lines
-|*${short}*|*${long}*|${help}${possible_values}${default}|
-}
-|-
-";
-
 /// Application launch arguments
 #[derive(Parser, Debug)]
 #[command(name = "custom", author, version, about, disable_help_flag = true)]
@@ -67,7 +55,7 @@ fn main() {
         let mut printer = Printer::new(Args::command())
             .without("author")
             .with("introduction", INTRO)
-            .with("options", TEMPLATE_OPTIONS);
+            .with("options", clap_help::TEMPLATE_OPTIONS_MERGED_VALUE);
         let skin = printer.skin_mut();
         skin.headers[0].compound_style.set_fg(ansi(202));
         skin.bold.set_fg(ansi(202));

@@ -1,3 +1,7 @@
+<a name="1.2.0"></a>
+### v1.2.0 - 2024-03-05
+- `TEMPLATE_OPTIONS_MERGED_VALUE` alterate options template, easier to read and more compact for most applications
+
 <a name="1.1.2"></a>
 ### v1.1.2 - 2024-02-29
 - fix some unwanted possible values and default values with clap 4.4.14+ - Fix #2

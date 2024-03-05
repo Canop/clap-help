@@ -31,21 +31,13 @@
 
 **clap-help** is especially suited to small terminals or big numbers of options.
 
-Note: there's no support for subcommands, create an issue if you need it.
+Note: there's no support for subcommands yet.
 
-## Comparison
+## Example
 
-This comparison uses the [broot](https://github.com/Canop/broot) program.
+The [bacon](https://dystroy.org/bacon) programs uses clap-help with an introduction text, a clearer options table, examples, and a skin consistent with the rest of the application
 
-### With clap-help
-
-![broot-clap-help](doc/broot-clap-help.png)
-
-### With the standard help rendering
-
-![broot-vanilla](doc/broot-vanilla.png)
-
-*(my screen isn't big enough to fit even half the help page)*
+![bacon](doc/bacon.png)
 
 ## Usage
 
@@ -169,70 +161,42 @@ printer.print_help();
 
 [complete code of the example](examples/with-examples/main.rs)
 
+
 ### Changing the skin
 
 If your program has some kind of graphical identity, you may want to extend it to the help.
 
-This is the case of [bacon](https://dystroy.org/bacon) which features this kind of saturated pink that kids associate to pigs.
+You may change colors, preferably with more compatible [ansi color codes](https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit).
 
-This change was easily done by setting the [color](https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit) of first level headers and bold:
-
-```rust
-let mut printer = clap_help::Printer::new(Args::command())
-    .with("introduction", INTRO)
-    .without("author");
-let skin = printer.skin_mut();
-skin.headers[0].compound_style.set_fg(ansi(204));
-skin.bold.set_fg(ansi(204));
-printer.print_help();
-```
-
-Result:
-
-![bacon](doc/bacon.png)
-
-### Customizing more: changing both the skin and the templates
-
-The example in `examples/custom` mainly features:
-
-* less restreint on the colors
-* a removal of the `value` column
+See example in `examples/custom` mainly features:
 
 ![custom](doc/custom.png)
 
 The strategy for those changes is
 
 * to redefine the `bold`, `italic`, and `inline_code` styles to change their foreground color, to remove the background of the code, and to remove the Italic attribute of `italic`
-* to change the `"options"` template so that `${short}` and `${long}` are in italic (i.e. between stars in Markdown)
-* to modify the template to remove the unwanted column
+* to use the `TEMPLATE_OPTIONS_MERGED_VALUE` template for options
 
 Here are the relevant parts of the code:
 
 
 ```rust
-pub static TEMPLATE_OPTIONS: &str = "
+static INTRO: &str = "
 
-**Options:**
-|:-:|:-:|:-|
-|short|long|what it does|
-|:-:|:-|:-|
-${option-lines
-|*${short}*|*${long}*|${help}${possible_values}${default}|
-}
-|-
+Compute `height x width`
+More info at *https://dystroy.org*
 ";
-```
 
-```rust
 let mut printer = Printer::new(Args::command())
     .without("author")
     .with("introduction", INTRO)
-    .with("options", TEMPLATE_OPTIONS);
+    .with("options", clap_help::TEMPLATE_OPTIONS_MERGED_VALUE);
 let skin = printer.skin_mut();
 skin.headers[0].compound_style.set_fg(ansi(202));
 skin.bold.set_fg(ansi(202));
 skin.italic = termimad::CompoundStyle::with_fg(ansi(45));
 skin.inline_code = termimad::CompoundStyle::with_fg(ansi(223));
+skin.table_border_chars = termimad::ROUNDED_TABLE_BORDER_CHARS;
 printer.print_help();
 ```
 
@@ -240,5 +204,5 @@ Complete example is in `/examples/custom` and can be seen with `cargo run --exam
 
 Please note that not every customization is possible or easy.
 And some may be easy but not obvious.
-Come to the chat and ask if needed.
+Come to [the chat](https://miaou.dystroy.org/3768?rust) and ask if needed.
 
