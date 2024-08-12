@@ -1,3 +1,7 @@
+<a name="1.3.0"></a>
+### v1.3.0 - 2024-08-12
+- update Termimad to 0.30
+
 <a name="1.2.0"></a>
 ### v1.2.0 - 2024-03-05
 - `TEMPLATE_OPTIONS_MERGED_VALUE` alterate options template, easier to read and more compact for most applications
