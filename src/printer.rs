@@ -89,7 +89,7 @@ pub static TEMPLATES: &[&str] = &[
 ///     if args.help {
 ///         let mut printer = clap_help::Printer::new(Args::command())
 ///             .with("options", clap_help::TEMPLATE_OPTIONS_MERGED_VALUE);
-///         printer.skin_mut().bold.set_fg(ansi(204));
+///         printer.skin_mut().bold.set_fg(termimad::ansi(204));
 ///         printer.print_help();
 ///         return;
 ///     }

@@ -1,3 +1,7 @@
+<a name="1.3.1"></a>
+### v1.3.1 - 2024-10-26
+- update Termimad to 0.31
+
 <a name="1.3.0"></a>
 ### v1.3.0 - 2024-08-12
 - update Termimad to 0.30

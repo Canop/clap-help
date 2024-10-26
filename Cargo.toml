@@ -1,6 +1,6 @@
 [package]
 name = "clap-help"
-version = "1.3.0"
+version = "1.3.1"
 edition = "2021"
 authors = ["dystroy <denys.seguret@gmail.com>"]
 repository = "https://github.com/Canop/clap-help"
@@ -16,7 +16,7 @@ default = []
 
 [dependencies]
 clap = { version = "4.4", features = ["derive", "cargo"] }
-termimad = "0.30"
+termimad = "0.31"
 terminal-light = "1.2"
 
 [patch.crates-io]
