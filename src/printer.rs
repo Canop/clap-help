@@ -195,6 +195,7 @@ impl<'t> Printer<'t> {
         }
         let options = cmd
             .get_arguments()
+            .filter(|a| !a.is_hide_set())
             .filter(|a| a.get_short().is_some() || a.get_long().is_some());
         for arg in options {
             let sub = expander.sub("option-lines");

@@ -1,3 +1,7 @@
+<a name="1.3.2"></a>
+### v1.3.2 - 2025-02-24
+- don't list arguments flagged as hidden
+
 <a name="1.3.1"></a>
 ### v1.3.1 - 2024-10-26
 - update Termimad to 0.31
