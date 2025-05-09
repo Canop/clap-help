@@ -1,3 +1,7 @@
+<a name="1.4.0"></a>
+### v1.4.0 - 2025-05-09
+- update termimad to 0.32, crossterm to 0.29
+
 <a name="1.3.2"></a>
 ### v1.3.2 - 2025-02-24
 - don't list arguments flagged as hidden
