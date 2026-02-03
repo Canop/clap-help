@@ -15,9 +15,9 @@ rust-version = "1.65"
 default = []
 
 [dependencies]
-clap = { version = "4.4", features = ["derive", "cargo"] }
-termimad = "0.34"
-terminal-light = "1.8"
+clap = { version = "4.5.57", features = ["derive", "cargo"] }
+termimad = "0.34.1"
+terminal-light = "1.8.0"
 
 [patch.crates-io]
 # termimad = { path = "../termimad" }
