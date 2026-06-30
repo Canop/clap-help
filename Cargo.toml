@@ -1,6 +1,6 @@
 [package]
 name = "clap-help"
-version = "1.5.0"
+version = "1.5.1"
 edition = "2021"
 authors = ["dystroy <denys.seguret@gmail.com>"]
 repository = "https://github.com/Canop/clap-help"
@@ -17,7 +17,7 @@ default = []
 [dependencies]
 clap = { version = "4.4", features = ["derive", "cargo"] }
 termimad = "0.34"
-terminal-light = "1.8"
+terminal-light = "1.9"
 
 [patch.crates-io]
 # termimad = { path = "../termimad" }
