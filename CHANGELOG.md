@@ -1,3 +1,12 @@
+<a name="1.6.0"></a>
+### v1.6.0 - 2026-07-10
+- update termimad to 0.35, which brings support for ordered lists
+- update clap to 4.6
+
+<a name="1.5.1"></a>
+### v1.5.1 - 2026-06-30
+- improve dark/light detection on Windows
+
 <a name="1.5.0"></a>
 ### v1.5.0 - 2025-08-29
 - update termimad to 0.34
