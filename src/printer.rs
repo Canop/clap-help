@@ -1,6 +1,9 @@
 use {
     clap::{ArgAction, Command},
-    std::collections::HashMap,
+    std::{
+        collections::HashMap,
+        io::{self, Write},
+    },
     termimad::{
         minimad::{OwningTemplateExpander, TextTemplate},
         FmtText, MadSkin,
@@ -211,7 +214,7 @@ impl<'t> Printer<'t> {
             if arg.get_action().takes_values() {
                 if let Some(name) = arg.get_value_names().and_then(|arr| arr.first()) {
                     sub.set("value", name);
-                    let braced = format!("<{}>", name);
+                    let braced = format!("<{name}>");
                     sub.set("value-braced", &braced);
                     if arg.get_short().is_some() {
                         sub.set("value-short-braced", &braced);
@@ -221,7 +224,7 @@ impl<'t> Printer<'t> {
                         sub.set("value-long-braced", &braced);
                         sub.set("value-long", name);
                     }
-                };
+                }
             }
             let mut possible_values = arg.get_possible_values();
             if !possible_values.is_empty() {
@@ -279,27 +282,43 @@ impl<'t> Printer<'t> {
     }
     /// Print the provided template with the printer's expander
     ///
-    /// It's normally more convenient to change template_keys or some
+    /// It's normally more convenient to change `template_keys` or some
     /// templates, unless you want none of the standard templates
     pub fn print_template(&self, template: &str) {
         self.skin.print_owning_expander_md(&self.expander, template);
     }
+    /// Write the provided template with the printer's expander
+    ///
+    /// It's normally more convenient to change `template_keys` or some
+    /// templates, unless you want none of the standard templates
+    pub fn write_template<W: Write>(&self, w: &mut W, template: &str) -> io::Result<()> {
+        self.skin.write_owning_expander_md(w, &self.expander, template)
+    }
     /// Print all the templates, in order
+    ///
+    /// # Panics
+    /// Panics if writing to stdout fails (use `write_help` to handle it)
     pub fn print_help(&self) {
+        self.write_help(&mut io::stdout())
+            .expect("failed printing to stdout");
+    }
+    /// Write all the templates, in order
+    pub fn write_help<W: Write>(&self, w: &mut W) -> io::Result<()> {
         if self.full_width {
-            self.print_help_full_width()
+            self.write_help_full_width(w)
         } else {
-            self.print_help_content_width()
+            self.write_help_content_width(w)
         }
     }
-    fn print_help_full_width(&self) {
+    fn write_help_full_width<W: Write>(&self, w: &mut W) -> io::Result<()> {
         for key in &self.template_keys {
             if let Some(template) = self.templates.get(key) {
-                self.print_template(template);
+                self.write_template(w, template)?;
             }
         }
+        Ok(())
     }
-    fn print_help_content_width(&self) {
+    fn write_help_content_width<W: Write>(&self, w: &mut W) -> io::Result<()> {
         let (width, _) = termimad::terminal_size();
         let mut width = width as usize;
         if let Some(max_width) = self.max_width {
@@ -320,7 +339,8 @@ impl<'t> Printer<'t> {
             .fold(0, |cw, text| cw.max(text.content_width()));
         for text in &mut texts {
             text.set_rendering_width(content_width);
-            println!("{}", text);
+            writeln!(w, "{text}")?;
         }
+        Ok(())
     }
 }

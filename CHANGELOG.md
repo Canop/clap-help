@@ -1,3 +1,6 @@
+### next
+- `Printer::write_help` and `Printer::write_template`, returning an `io::Result` instead of panicking when the output is closed
+
 <a name="1.6.0"></a>
 ### v1.6.0 - 2026-07-10
 - update termimad to 0.35, which brings support for ordered lists
