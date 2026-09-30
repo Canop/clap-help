@@ -1,4 +1,5 @@
-### next
+<a name="1.7.0"></a>
+### v1.7.0 - 2026-09-30
 - `Printer::write_help` and `Printer::write_template`, returning an `io::Result` instead of panicking when the output is closed
 
 <a name="1.6.0"></a>
